@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎓 Мои игры для класса</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(circle at 10% 10%, rgba(90, 74, 184, 0.10), transparent 45%),
+      radial-gradient(circle at 90% 90%, rgba(74, 123, 168, 0.10), transparent 45%),
+      linear-gradient(135deg, #eef4fb 0%, #f5ede0 100%);
+    min-height: 100vh;
+    padding: 30px 16px 60px;
+    color: #1a2a3a;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* ====== ШАПКА ====== */
+  .main-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 20px;
+  }
+  .main-header h1 {
+    font-size: 42px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #5a4ab8, #4a7ba8, #d46a98);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1px;
+    margin-bottom: 10px;
+  }
+  .main-header p {
+    font-size: 17px;
+    color: #4a5a72;
+    font-style: italic;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  /* ====== КАТЕГОРИИ ====== */
+  .category { margin-bottom: 40px; }
+  .category-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 24px;
+    font-weight: 800;
+    color: #2a4a6a;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 3px dashed #b8cfe6;
+  }
+  .category-title .emoji { font-size: 32px; }
+  .category-title .count {
+    margin-left: auto;
+    font-size: 13px;
+    font-weight: 700;
+    color: #5a7a9a;
+    background: #e8f0f8;
+    padding: 4px 14px;
+    border-radius: 20px;
+  }
+
+  /* ====== СЕТКА КАРТОЧЕК ====== */
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .game-card {
+    display: block;
+    background: #fff;
+    border: 2px solid #d0e0f0;
+    border-radius: 20px;
+    padding: 20px 22px 18px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s cubic-bezier(0.34, 1.2, 0.5, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(74, 123, 168, 0.08);
+  }
+  .game-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 4px;
+    background: linear-gradient(90deg, #5a4ab8, #4a7ba8, #d46a98);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .game-card:hover {
+    transform: translateY(-6px);
+    border-color: #7a9bc8;
+    box-shadow: 0 12px 36px rgba(74, 123, 168, 0.22);
+  }
+  .game-card:hover::before { transform: scaleX(1); }
+  .game-card:hover .game-emoji { transform: scale(1.15) rotate(-8deg); }
+
+  .game-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .game-emoji {
+    font-size: 42px;
+    line-height: 1;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    flex-shrink: 0;
+  }
+  .game-meta { flex: 1; min-width: 0; }
+  .game-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1a2a3a;
+    line-height: 1.25;
+    margin-bottom: 4px;
+  }
+  .game-class {
+    font-size: 12px;
+    font-weight: 700;
+    color: #5a7a9a;
+    background: #eaf4fb;
+    padding: 2px 10px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+  .game-desc {
+    font-size: 13.5px;
+    color: #5a6a7a;
+    line-height: 1.5;
+    margin-top: 6px;
+  }
+  .game-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+  .tag-blue   { background: #e3f0fa; color: #2a5a8a; }
+  .tag-purple { background: #ebe0f7; color: #6a3d9a; }
+  .tag-pink   { background: #fce4ec; color: #a03a6a; }
+  .tag-green  { background: #e0f0e4; color: #2a6a3a; }
+  .tag-orange { background: #fdebd0; color: #a06020; }
+  .tag-gold   { background: #fff4d0; color: #8a6a10; }
+  .tag-dark   { background: #2a1a3a; color: #f4c430; }
+
+  /* ====== ПОДВАЛ ====== */
+  .footer {
+    text-align: center;
+    margin-top: 50px;
+    padding: 22px 20px;
+    color: #7a9ab8;
+    font-size: 14px;
+    font-style: italic;
+    border-top: 2px dashed #b8cfe6;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 16px 12px 40px; }
+    .main-header h1 { font-size: 28px; }
+    .main-header p { font-size: 15px; }
+    .category-title { font-size: 19px; }
+    .category-title .emoji { font-size: 26px; }
+    .games-grid { grid-template-columns: 1fr; gap: 12px; }
+    .game-emoji { font-size: 36px; }
+    .game-title { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header class="main-header">
+    <h1>🎓 Мои игры для класса</h1>
+    <p>Выбери игру — и вперёд учиться играя!</p>
+  </header>
+
+  <div id="gamesContainer"></div>
+
+  <div class="footer">
+    💜 Игры созданы для интересного обучения. Выбирай, играй, учись!
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   📚 СПИСОК ИГР
+   ================================================================
+
+   ✏️ КАК ДОБАВИТЬ НОВУЮ ИГРУ (прямо на GitHub, в браузере):
+
+   1. Загрузите HTML-файл игры в репозиторий (например, futbol.html)
+
+   2. Откройте этот файл index.html на GitHub → нажмите карандаш ✏️
+      (Edit this file)
+
+   3. Найдите массив «games» ниже. Скопируйте ЛЮБУЮ строчку-блок
+      (от { до },) и вставьте её следом. Замените значения:
+
+      category:      «Математика», «Геометрия», «Русский язык» и т.д.
+      categoryEmoji: эмодзи категории (нужен только в первой игре категории)
+      file:          ИМЯ ФАЙЛА игры — например, futbol.html
+      emoji:         эмодзи для карточки (⚽ 📐 ✏️ 🎯 и т.д.)
+      title:         название игры
+      class:         для какого класса
+      desc:          описание одним предложением
+      tags:          теги с цветом (см. таблицу ниже)
+
+   4. Внизу страницы нажмите зелёную кнопку «Commit changes»
+
+   5. Через 1–2 минуты новая игра появится на сайте!
+
+   ────────────────────────────────────────────────────────────────
+
+   🎨 ДОСТУПНЫЕ ЦВЕТА ТЕГОВ:
+      'blue'   — синий       'purple' — фиолетовый
+      'pink'   — розовый     'green'  — зелёный
+      'orange' — оранжевый   'gold'   — золотой
+      'dark'   — тёмный
+
+   ────────────────────────────────────────────────────────────────
+
+   💡 Если у новой игры другая категория — она создастся автоматически.
+   💡 Если хотите временно убрать игру — сотрите блок от { до },
+      или поставьте // перед каждой строчкой.
+   ================================================================ */
+
+const games = [
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🧮 МАТЕМАТИКА
+  // ═══════════════════════════════════════════════════════════════
+  {
+    category: 'Математика',
+    categoryEmoji: '🧮',
+    file: 'futbol.html',
+    emoji: '⚽',
+    title: 'Футбольные уравнения',
+    class: '5 класс',
+    desc: 'Решай уравнения — и забивай голы! Вратарь ловит мяч при ошибке.',
+    tags: [
+      { text: 'уравнения', color: 'green' },
+      { text: 'игра', color: 'blue' }
+    ]
+  },
+
+  /* ═══════════════════════════════════════════════════════════════
+     ➕ НОВЫЕ ИГРЫ ДОБАВЛЯЙТЕ НИЖЕ ⬇️
+
+     Пример (просто скопируйте этот шаблон и замените данные):
+
+  {
+    category: 'Математика',
+    categoryEmoji: '🧮',
+    file: 'НАЗВАНИЕ-ФАЙЛА.html',
+    emoji: '🎮',
+    title: 'Название игры',
+    class: '5 класс',
+    desc: 'Короткое описание игры.',
+    tags: [
+      { text: 'тема', color: 'blue' }
+    ]
+  },
+
+  ═══════════════════════════════════════════════════════════════ */
+
+];
+
+/* ================================================================
+   ⚙️ ДАЛЬШЕ — АВТОМАТИКА. НЕ ТРОГАЙТЕ ЭТОТ БЛОК.
+   ================================================================ */
+
+const categories = [];
+const grouped = {};
+
+games.forEach(game => {
+  if (!grouped[game.category]) {
+    grouped[game.category] = {
+      emoji: game.categoryEmoji || '🎮',
+      games: []
+    };
+    categories.push(game.category);
+  }
+  grouped[game.category].games.push(game);
+});
+
+const container = document.getElementById('gamesContainer');
+let html = '';
+
+categories.forEach(catName => {
+  const cat = grouped[catName];
+  html += `
+    <section class="category">
+      <h2 class="category-title">
+        <span class="emoji">${cat.emoji}</span>
+        <span>${catName}</span>
+        <span class="count">${cat.games.length} ${pluralGames(cat.games.length)}</span>
+      </h2>
+      <div class="games-grid">
+  `;
+
+  cat.games.forEach(g => {
+    const tagsHTML = (g.tags || []).map(t =>
+      `<span class="tag tag-${t.color || 'blue'}">${t.text}</span>`
+    ).join('');
+
+    html += `
+      <a href="${g.file}" class="game-card">
+        <div class="game-header">
+          <div class="game-emoji">${g.emoji}</div>
+          <div class="game-meta">
+            <div class="game-title">${g.title}</div>
+            <span class="game-class">${g.class}</span>
+          </div>
+        </div>
+        <div class="game-desc">${g.desc}</div>
+        <div class="game-tags">${tagsHTML}</div>
+      </a>
+    `;
+  });
+
+  html += `</div></section>`;
+});
+
+container.innerHTML = html;
+
+function pluralGames(n) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 14) return 'игр';
+  if (mod10 === 1) return 'игра';
+  if (mod10 >= 2 && mod10 <= 4) return 'игры';
+  return 'игр';
+}
+</script>
+
+</body>
+</html>
